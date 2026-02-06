@@ -1,0 +1,55 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+    font-family: sans-serif;
+    background-color: #f0f4f8;
+    text-align: center;
+    padding: 20px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5列で表示 */
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.day {
+    aspect-ratio: 1; /* 正方形にする */
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #ccc;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.1s;
+    user-select: none; /* 文字選択を防ぐ */
+}
+
+.day:active {
+    transform: scale(0.95);
+}
+
+/* ▼▼▼ ここがスタンプのデザインです！ ▼▼▼ */
+.day.stamped {
+    background-color: #ffcccc; /* 背景色 */
+    color: #d32f2f; /* 文字色 */
+    border: 2px solid #d32f2f;
+    
+    /* 画像にしたい場合は以下のように書きます */
+    /* background-image: url('stamp.png'); */
+    /* background-size: cover; */
+}
+/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+
+#resetBtn {
+    margin-top: 30px;
+    padding: 10px 20px;
+    background: #666;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
