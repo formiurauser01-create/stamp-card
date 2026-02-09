@@ -15,11 +15,12 @@ body {
 	margin: 0;
 	padding-top: env(safe-area-inset-top);    /* iPhoneのノッチ（上の出っ張り）対策 */
 	padding-bottom: env(safe-area-inset-bottom); /* 下のバー対策 */
+	padding: 20px 0 30px;
 	padding-left: 20px;
 	padding-right: 20px;
 	box-sizing: border-box; /* パディングを含めて幅を計算 */
 	/* スマホでのスクロールバウンス対策 */
-	overscroll-behavior-y: none;
+	/*overscroll-behavior-y: none;*/
 }
 
 body {
