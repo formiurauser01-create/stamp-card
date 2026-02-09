@@ -1,55 +1,196 @@
 @charset "utf-8";
 /* CSS Document */
 body {
-    font-family: sans-serif;
-    background-color: #f0f4f8;
-    text-align: center;
-    padding: 20px;
+	font-family: "M PLUS 1p", sans-serif;
+	background-color: #000000;
+	/*background-image: radial-gradient(#666666 2px, transparent 2px);*/
+	background-size: 20px 20px;
+	text-align: center;
+	padding: 20px;
+	color: #333;
+	margin: 0;
+	/* スマホでのスクロールバウンス対策 */
+	overscroll-behavior-y: none;
 }
 
+img {
+	vertical-align: bottom;
+}
+
+/* --- font --- */
+.dela-gothic-one-regular {
+  font-family: "Dela Gothic One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.m-plus-1p-regular {
+  font-family: "M PLUS 1p", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.m-plus-1p-medium {
+  font-family: "M PLUS 1p", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+.m-plus-1p-bold {
+  font-family: "M PLUS 1p", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+.m-plus-1p-extrabold {
+  font-family: "M PLUS 1p", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+.m-plus-1p-black {
+  font-family: "M PLUS 1p", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+
+h1 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ▼▼▼ 年月ナビゲーションの変更点 ▼▼▼ */
+.info-bar {
+		width: 66%;
+    background: #ffffff;
+    padding: 5px 15px;
+    border-radius: 10px;
+    margin: 6px auto 15px;
+    box-shadow: 0 3px 0 #666666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date-info {
+    flex-grow: 1; /* 真ん中の文字エリアを広げる */
+}
+
+.info-bar h2 {
+    font-size: 1.0rem;
+    margin: 0;
+    color: #000000;
+}
+
+.info-bar p {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+}
+
+.number-piece {
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin: 0 auto 6px;
+}
+
+.highlight {
+    color: #f42920;
+    font-size: 3rem;
+    margin: 0 6px;
+}
+
+/* 月移動ボタン */
+.nav-btn {
+		background: #ccc;
+    border: none;
+    color: #ffffff;
+    font-size: 0.7rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.nav-btn:active {
+    background: #bbdefb;
+    transform: scale(0.9);
+}
+
+/* メッセージエリア */
+.message-box {
+		background: #393939; 
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    min-height: 1.5em;
+    border: 1px solid #ffffff;
+    box-shadow: 0 3px 0 #666666;
+    transition: transform 0.3s;
+    font-size: 1.0rem;
+    font-weight: 600;
+}
+
+/* カレンダー */
 .calendar {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5列で表示 */
-    gap: 10px;
-    margin-top: 20px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 30px;
 }
 
 .day {
-    aspect-ratio: 1; /* 正方形にする */
+    aspect-ratio: 1;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
     color: #ccc;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.1s;
-    user-select: none; /* 文字選択を防ぐ */
+    box-shadow: 0 3px 0 #666666;
+    user-select: none;
+    font-family: "M PLUS 1p", sans-serif;
+    font-size: 1.2rem;
 }
 
 .day:active {
-    transform: scale(0.95);
+    transform: translateY(3px);
+    box-shadow: none;
 }
 
-/* ▼▼▼ ここがスタンプのデザインです！ ▼▼▼ */
 .day.stamped {
-    background-color: #ffcccc; /* 背景色 */
-    color: #d32f2f; /* 文字色 */
-    border: 2px solid #d32f2f;
-    
-    /* 画像にしたい場合は以下のように書きます */
-    /* background-image: url('stamp.png'); */
-    /* background-size: cover; */
+    background-color: #fff34e;
+    color: #fff;
+    position: relative;
 }
-/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
 
+/* 数字の代わりにアイコンを重ねる */
+.day.stamped::after {
+    content: "\f6be";/*cat*/
+		/*content: "\f67b";*//*spaghetti-monster-flying*/
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    font-size: 2.4rem;
+    color: #f42920;
+}
+
+/* リセットボタン */
 #resetBtn {
-    margin-top: 30px;
-    padding: 10px 20px;
-    background: #666;
+		padding: 10px 25px;
+		background-color: #f42920;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-shadow: 0 3px 0 #666666;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
 }
