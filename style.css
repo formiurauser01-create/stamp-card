@@ -1,16 +1,28 @@
 @charset "utf-8";
 /* CSS Document */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh; /* 画面の高さいっぱいに広げる */
+    background-color: #000 !important; /* 他の指定を無視して強制的に黒 */
+    background-image: none !important; /* 水玉模様を完全に消す */
+}
+
 body {
 	font-family: "M PLUS 1p", sans-serif;
-	background-color: #000000;
-	/*background-image: radial-gradient(#666666 2px, transparent 2px);*/
-	background-size: 20px 20px;
 	text-align: center;
-	padding: 20px;
-	color: #333;
 	margin: 0;
+	padding-top: env(safe-area-inset-top);    /* iPhoneのノッチ（上の出っ張り）対策 */
+	padding-bottom: env(safe-area-inset-bottom); /* 下のバー対策 */
+	padding-left: 20px;
+	padding-right: 20px;
+	box-sizing: border-box; /* パディングを含めて幅を計算 */
 	/* スマホでのスクロールバウンス対策 */
 	overscroll-behavior-y: none;
+}
+
+body {
 }
 
 img {
@@ -167,7 +179,7 @@ h1 {
 }
 
 .day.stamped {
-    background-color: #fff34e;
+    background-color: #fffbc6;
     color: #fff;
     position: relative;
 }
