@@ -16,9 +16,6 @@ body {
     /* 3. iPhoneの上下の余白（ノッチ・バー）を確保しつつ背景を黒にする設定 */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
-    padding-left: 20px;
-    padding-right: 20px;
-    
     min-height: 100vh;
     box-sizing: border-box;
 }
@@ -59,6 +56,10 @@ img {
   font-style: normal;
 }
 
+.container {
+    padding: 0 20px;
+    padding-bottom: 120px; /* フッター(70px) + 余裕(50px) */
+}
 
 h1 {
     font-size: 1.8rem;
@@ -76,7 +77,6 @@ h1 {
     padding: 5px 15px;
     border-radius: 10px;
     margin: 0 auto;
-    box-shadow: 0 3px 0 #666666;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -136,12 +136,12 @@ h1 {
 .message-box {
 		background: #393939; 
     color: #ffffff;
-    padding: 10px;
+    /*padding: 10px;*/
+		line-height: 1.8;
     border-radius: 10px;
     margin-bottom: 20px;
     min-height: 1.5em;
     border: 1px solid #ffffff;
-    box-shadow: 0 3px 0 #666666;
     transition: transform 0.3s;
     font-size: 1.0rem;
     font-weight: 600;
@@ -165,7 +165,6 @@ h1 {
     font-weight: bold;
     color: #ccc;
     cursor: pointer;
-    box-shadow: 0 3px 0 #666666;
     user-select: none;
     font-family: "M PLUS 1p", sans-serif;
     font-size: 1.2rem;
@@ -173,7 +172,6 @@ h1 {
 
 .day:active {
     transform: translateY(3px);
-    box-shadow: none;
 }
 
 .day.stamped {
@@ -195,12 +193,202 @@ h1 {
 
 /* リセットボタン */
 #resetBtn {
-		padding: 10px 25px;
-		background-color: #f42920;
-    color: white;
-    border: none;
+    display: block;
+    margin: 20px auto 40px; /* 上下にゆとりを持たせる */
+    padding: 10px 25px;
+    background-color: #333; /* 少し落ち着いた色に変更もアリ */
+    color: #888; /* 普段は目立たせない */
+    border: 1px solid #444;
     border-radius: 10px;
-    box-shadow: 0 3px 0 #666666;
-    font-size: 0.9rem;
-    margin-bottom: 30px;
+    font-size: 0.8rem;
 }
+
+/* タブの切り替え制御 */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* タブを下に固定 */
+.tab-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom); /* iPhoneのバー対策 */
+    height: 70px;
+    border-top: 1px solid #333;
+    z-index: 1000;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.5rem;
+}
+
+.tab-btn.active { color: #f42920; }
+
+/* ポップアップメニュー */
+.stamp-popup {
+    position: fixed;
+    bottom: -100px; /* 最初は隠しておく */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    display: flex;
+    gap: 20px;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: 0 0 20px rgba(244, 41, 32, 0.4);
+    transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 999;
+}
+
+.stamp-popup.show {
+    bottom: 90px; /* メニューの少し上に表示 */
+}
+
+.stamp-option {
+    font-size: 1.8rem;
+    color: #666;
+    cursor: pointer;
+}
+
+.stamp-option:hover, .stamp-option.active {
+    color: #f42920;
+    transform: scale(1.2);
+}
+
+/* 中央のボタンを特別扱い */
+.selector-trigger {
+    background: #f42920 !important;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-top: -30px;
+    border: 5px solid #000 !important;
+    color: white !important;
+}
+
+/* カレンダーをコンパクトに */
+.calendar {
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.day { font-size: 1rem; }
+
+/* スタンプセレクターのスタイル */
+.stamp-selector-container {
+    margin: 10px 0 20px;
+}
+.stamp-pad {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.pad-item {
+    background: #1a1a1a;
+    padding: 10px;
+    border-radius: 12px;
+    width: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #333;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.pad-item i { font-size: 1.4rem; margin-bottom: 4px; color: #555; }
+.pad-item span { font-size: 0.65rem; color: #555; }
+
+/* 選択中のスタンプを強調 */
+.pad-item.active {
+    border-color: #f42920;
+    background: #2a1010;
+}
+.pad-item.active i { color: #f42920; }
+.pad-item.active span { color: #fff; }
+
+/* カレンダー内の個別アイコン表示設定 */
+.day.stamped.rank-normal::after { content: "\f6be"; color: #f42920; } /* 猫 */
+.day.stamped.rank-rankA::after { content: "\f005"; color: #ffd700; }  /* 星(金) */
+.day.stamped.rank-god::after { content: "\f521"; color: #ff00ff; }    /* 王冠(紫) */
+
+.goal-input-area {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+.goal-input-area input {
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px;
+    border-radius: 5px;
+}
+#newGoalCount { width: 60px; }
+#newGoalText { flex-grow: 1; }
+
+.goal-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+.goal-list li {
+    background: #1a1a1a;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 5px solid #444;
+}
+/* 達成した時のスタイル */
+.goal-list li.achieved {
+    border-left-color: #f42920;
+    background: #251010;
+}
+.goal-list li .achieved-badge {
+    color: #f42920;
+    font-size: 0.8rem;
+}
+.delete-goal {
+    color: #666;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.stamp-pad {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.pad-item {
+    background: #222;
+    padding: 10px;
+    border-radius: 12px;
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid transparent;
+    transition: 0.2s;
+}
+.pad-item i { font-size: 1.5rem; margin-bottom: 4px; color: #666; }
+.pad-item span { font-size: 0.6rem; color: #666; }
+
+/* 選択中のスタンプを光らせる */
+.pad-item.active {
+    border-color: #f42920;
+    background: #331010;
+}
+.pad-item.active i { color: #f42920; }
+.pad-item.active span { color: #fff; }
+
+

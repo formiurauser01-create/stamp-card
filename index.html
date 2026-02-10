@@ -25,27 +25,48 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="dela-gothic-one-regular">
-            <!--<img src="icon.png" width="30" alt="">--> my<img src="icon03.png" width="36" alt="">スタンプカード <!--<img src="icon02.png" width="30" alt="">-->
-        </h1>
-        
-        <div class="info-bar m-plus-1p-extrabold">
-            <button id="prevMonthBtn" class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
-            <div class="date-info">
-                <h2 id="currentDate">----年 --月</h2>
+        <div id="tab-main" class="tab-content active">
+            <h1 class="dela-gothic-one-regular">My<img src="icon03.png" alt="" width="36">Stamp</h1>
+            
+            <div class="info-bar m-plus-1p-extrabold">
+                <button id="prevMonthBtn" class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="date-info"><h2 id="currentDate">----年 --月</h2></div>
+                <button id="nextMonthBtn" class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
-            <button id="nextMonthBtn" class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-				<p class="number-piece">合計<span id="totalCount" class="highlight">0</span>個</p>
+            
+            <p class="number-piece">合計<span id="totalCount" class="highlight">0</span>個</p>
 
-        <div id="rewardMessage" class="message-box m-plus-1p-extrabold">
-            読み込み中...
+					<div id="rewardMessage" class="message-box m-plus-1p-extrabold"></div>
+
+            <div id="calendar" class="calendar"></div>
+            
+            <button id="resetBtn" class="m-plus-1p-extrabold">リセット</button>
         </div>
 
-        <div id="calendar" class="calendar">
+        <div id="tab-goals" class="tab-content">
+            <h2 class="dela-gothic-one-regular">目標リスト</h2>
+            <div class="goal-input-area m-plus-1p-bold">
+                <input type="number" id="newGoalCount" placeholder="個数">
+                <input type="text" id="newGoalText" placeholder="内容">
+                <button onclick="addGoal()">追加</button>
             </div>
-        <button id="resetBtn" class="m-plus-1p-extrabold">全データをリセット</button>
+            <ul id="goalList" class="goal-list m-plus-1p-bold"></ul>
+        </div>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+
+    <div id="stampPopup" class="stamp-popup">
+        <div class="stamp-option" onclick="selectRank('normal')"><i class="fa-solid fa-cat"></i></div>
+        <div class="stamp-option" onclick="selectRank('rankA')"><i class="fa-solid fa-star"></i></div>
+        <div class="stamp-option" onclick="selectRank('god')"><i class="fa-solid fa-crown"></i></div>
+    </div>
+
+    <nav class="tab-menu dela-gothic-one-regular">
+        <button class="tab-btn active" onclick="switchTab('main')"><i class="fa-solid fa-stamp"></i></button>
+        <button class="tab-btn selector-trigger" onclick="toggleStampPopup()">
+            <div id="activeStampIcon"><i class="fa-solid fa-cat"></i></div>
+        </button>
+        <button class="tab-btn" onclick="switchTab('goals')"><i class="fa-solid fa-trophy"></i></button>
+    </nav>
+
+    <script src="script.js" charset="utf-8"></script>
+</body></html>
