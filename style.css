@@ -1,29 +1,26 @@
 @charset "utf-8";
 /* CSS Document */
-html, body {
+html {
+    background-color: #000000 !important;
+}
+
+body {
+    font-family: "M PLUS 1p", sans-serif;
+    text-align: center;
     margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh; /* 画面の高さいっぱいに広げる */
-    background-color: #000 !important; /* 他の指定を無視して強制的に黒 */
-    background-image: none !important; /* 水玉模様を完全に消す */
-}
-
-body {
-	font-family: "M PLUS 1p", sans-serif;
-	text-align: center;
-	margin: 0;
-	padding-top: env(safe-area-inset-top);    /* iPhoneのノッチ（上の出っ張り）対策 */
-	padding-bottom: env(safe-area-inset-bottom); /* 下のバー対策 */
-	padding: 20px 0 30px;
-	padding-left: 20px;
-	padding-right: 20px;
-	box-sizing: border-box; /* パディングを含めて幅を計算 */
-	/* スマホでのスクロールバウンス対策 */
-	/*overscroll-behavior-y: none;*/
-}
-
-body {
+    /* 2. 背景設定をここに集約 */
+    background-color: #000000 !important;
+    background-image: none !important;
+    color: #ffffff;
+    
+    /* 3. iPhoneの上下の余白（ノッチ・バー）を確保しつつ背景を黒にする設定 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: 20px;
+    padding-right: 20px;
+    
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 img {
@@ -78,7 +75,7 @@ h1 {
     background: #ffffff;
     padding: 5px 15px;
     border-radius: 10px;
-    margin: 6px auto 15px;
+    margin: 0 auto;
     box-shadow: 0 3px 0 #666666;
     display: flex;
     justify-content: space-between;
