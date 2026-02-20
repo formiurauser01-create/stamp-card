@@ -1,394 +1,345 @@
 @charset "utf-8";
-/* CSS Document */
+
+/* =========================================
+   0. フォント設定 (PixelMplus10)
+   ========================================= */
+@font-face {
+    font-family: 'PixelMplus10';
+    /* ↓ 実際のフォントファイルのパスに合わせて変更してください ↓ */
+    src: url('fonts/PixelMplus10-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'PixelMplus10';
+    /* ↓ 実際のフォントファイルのパスに合わせて変更してください ↓ */
+    src: url('fonts/PixelMplus10-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* =========================================
+   1. ドラクエ風基本設定 (Base)
+   ========================================= */
 html {
     background-color: #000000 !important;
+    height: 100%;
 }
 
 body {
-    font-family: "M PLUS 1p", sans-serif;
-    text-align: center;
-    margin: 0;
-    /* 2. 背景設定をここに集約 */
+    /* 指定のビットマップフォントを適用 */
+    font-family: 'PixelMplus10', monospace, sans-serif;
     background-color: #000000 !important;
-    background-image: none !important;
     color: #ffffff;
-    
-    /* 3. iPhoneの上下の余白（ノッチ・バー）を確保しつつ背景を黒にする設定 */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    min-height: 100vh;
+    margin: 0;
+    padding: 10px;
+    padding-bottom: 140px; /* コマンドウィンドウ分の余白 */
     box-sizing: border-box;
+    image-rendering: pixelated; /* 画像をドット絵風にクッキリ表示 */
 }
 
-img {
-	vertical-align: bottom;
+/* 共通：ドラクエ風ウィンドウ枠 */
+.dq-window {
+    background-color: #000;
+    border: 4px double #ffffff; /* 白い二重線 */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 0 !important; /* 角丸禁止 */
+    box-shadow: 0 0 0 2px #000 inset; /* 内側に少し黒枠を入れて立体感 */
 }
 
-/* --- font --- */
-.dela-gothic-one-regular {
-  font-family: "Dela Gothic One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-.m-plus-1p-regular {
-  font-family: "M PLUS 1p", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-.m-plus-1p-medium {
-  font-family: "M PLUS 1p", sans-serif;
-  font-weight: 500;
-  font-style: normal;
-}
-.m-plus-1p-bold {
-  font-family: "M PLUS 1p", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-.m-plus-1p-extrabold {
-  font-family: "M PLUS 1p", sans-serif;
-  font-weight: 800;
-  font-style: normal;
-}
-.m-plus-1p-black {
-  font-family: "M PLUS 1p", sans-serif;
-  font-weight: 900;
-  font-style: normal;
+h1, h2 {
+    text-align: center;
+    margin: 5px 0;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
-.container {
-    padding: 0 20px;
-    padding-bottom: 120px; /* フッター(70px) + 余裕(50px) */
+/* =========================================
+   2. ステータスウィンドウ (Header / UI)
+   ========================================= */
+.status-window {
+    text-align: left;
 }
 
-h1 {
-    font-size: 1.8rem;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-/* ▼▼▼ 年月ナビゲーションの変更点 ▼▼▼ */
 .info-bar {
-		width: 66%;
-    background: #ffffff;
-    padding: 5px 15px;
-    border-radius: 10px;
-    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 5px;
 }
 
-.date-info {
-    flex-grow: 1; /* 真ん中の文字エリアを広げる */
+.date-info h2 {
+    font-size: 1.4rem;
+    margin: 0 10px;
 }
 
-.info-bar h2 {
-    font-size: 1.0rem;
-    margin: 0;
-    color: #000000;
-}
-
-.info-bar p {
-    margin: 5px 0 0 0;
-    font-size: 0.9rem;
-}
-
-.number-piece {
-    color: #ffffff;
-    font-weight: 900;
-    font-size: 1.2rem;
-    margin: 0 auto 6px;
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
 }
 
 .highlight {
-    color: #f42920;
-    font-size: 3rem;
-    margin: 0 6px;
-}
-
-/* 月移動ボタン */
-.nav-btn {
-		background: #ccc;
-    border: none;
-    color: #ffffff;
-    font-size: 0.7rem;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
+    color: #ffd600; /* 黄色で強調 */
+    font-size: 1.3rem;
     font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
 }
 
-.nav-btn:active {
-    background: #bbdefb;
-    transform: scale(0.9);
+/* メッセージウィンドウ風 */
+.message-window {
+    border: 2px solid #fff; /* ここは単線で少し区別 */
+    padding: 8px;
+    min-height: 2.5em;
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-top: 5px;
 }
 
-/* メッセージエリア */
-.message-box {
-		background: #393939; 
-    color: #ffffff;
-    /*padding: 10px;*/
-		line-height: 1.8;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    min-height: 1.5em;
-    border: 1px solid #ffffff;
-    transition: transform 0.3s;
-    font-size: 1.0rem;
-    font-weight: 600;
+/* =========================================
+   3. ドラクエ風ボタン・入力フォーム
+   ========================================= */
+/* 共通ボタンスタイル */
+.dq-btn {
+    background: #000;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 4px 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 0;
+}
+.dq-btn:active, .dq-command.active {
+    background: #fff; /* 押した時は白黒反転 */
+    color: #000;
 }
 
-/* カレンダー */
+/* 年月移動などの操作ボタン */
+.opt-btn {
+    font-weight: bold;
+    min-width: 30px;
+}
+.mini {
+    font-size: 0.8rem;
+    padding: 2px 5px;
+}
+
+/* 入力フォーム */
+.dq-input {
+    background: #000;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 5px;
+    font-family: inherit;
+    font-size: 1rem;
+    border-radius: 0;
+}
+
+/* =========================================
+   4. カレンダー本体 (Calendar - Main Window)
+   ========================================= */
 .calendar {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 30px;
+    gap: 4px;
+    border: 2px solid #fff; /* カレンダー全体も枠で囲む */
+    padding: 4px;
+    background: #000;
 }
 
 .day {
     aspect-ratio: 1;
-    background-color: white;
-    border-radius: 10px;
+    background-color: #000;
+    border: 2px solid #fff; /* マス目も白い枠線 */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #ccc;
+    color: #fff;
     cursor: pointer;
     user-select: none;
-    font-family: "M PLUS 1p", sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    border-radius: 0; /* 角丸禁止 */
 }
 
 .day:active {
-    transform: translateY(3px);
+    background: #fff;
+    color: #000;
 }
 
+/* --- スタンプ状態 --- */
 .day.stamped {
-    background-color: #fffbc6;
-    color: #fff;
+    background-color: #fff; /* 押したら白背景に反転 */
+    color: #fff; /* 数字は黒に */
     position: relative;
 }
 
-/* 数字の代わりにアイコンを重ねる */
+/* --- スタンプ状態の表示設定 --- */
 .day.stamped::after {
-    content: "\f6be";/*cat*/
-		/*content: "\f67b";*//*spaghetti-monster-flying*/
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
+    /* FontAwesomeの指定を削除し、PixelMplus10を強制適用 */
+		font-family: 'PixelMplus10', monospace !important;
     position: absolute;
-    font-size: 2.4rem;
-    color: #f42920;
-}
-
-/* リセットボタン */
-#resetBtn {
-    display: block;
-    margin: 20px auto 40px; /* 上下にゆとりを持たせる */
-    padding: 10px 25px;
-    background-color: #333; /* 少し落ち着いた色に変更もアリ */
-    color: #888; /* 普段は目立たせない */
-    border: 1px solid #444;
-    border-radius: 10px;
-    font-size: 0.8rem;
-}
-
-/* タブの切り替え制御 */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-
-/* タブを下に固定 */
-.tab-menu {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #1a1a1a;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-bottom: env(safe-area-inset-bottom); /* iPhoneのバー対策 */
-    height: 70px;
-    border-top: 1px solid #333;
-    z-index: 1000;
-}
-
-.tab-btn {
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 1.5rem;
-}
-
-.tab-btn.active { color: #f42920; }
-
-/* ポップアップメニュー */
-.stamp-popup {
-    position: fixed;
-    bottom: -100px; /* 最初は隠しておく */
+    font-size: 2.7rem;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    background: #222;
-    display: flex;
-    gap: 20px;
-    padding: 15px 25px;
-    border-radius: 50px;
-    box-shadow: 0 0 20px rgba(244, 41, 32, 0.4);
-    transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 999;
+    transform: translate(-50%, -50%);
+    line-height: 2.7rem;
 }
 
-.stamp-popup.show {
-    bottom: 90px; /* メニューの少し上に表示 */
+/* --- 今日（Today）の強調 --- */
+/* ドラクエ風に「カーソルが合っている」ような点滅枠 */
+.day.today {
+    border: 2px dashed #ffd600; /* 黄色の点線 */
+    animation: dqFlash 0.5s step-end infinite;
+}
+@keyframes dqFlash {
+    50% { border-color: transparent; }
 }
 
-.stamp-option {
-    font-size: 1.8rem;
-    color: #666;
-    cursor: pointer;
+/* 各ランクのテキストと色設定 */
+/* ドラクエのパレットに近い原色を使用 */
+.day.stamped.rank-normal::after { 
+    content: "♥"; 
+    color:#ff0000; /* 情熱の赤 */
+		left: 54%;
+} 
+.day.stamped.rank-rankA::after { 
+    content: "★";
+		color: #000;
+    /*color: #ffd600;*/ /* 輝く黄色 */
+} 
+.day.stamped.rank-god::after { 
+    content: "〠"; 
+		color: #000;
+    /*color: #00ff00;*/ /* 癒やしの緑、またはお好みの色で */
+	left: 54%;
 }
 
-.stamp-option:hover, .stamp-option.active {
-    color: #f42920;
-    transform: scale(1.2);
-}
-
-/* 中央のボタンを特別扱い */
-.selector-trigger {
-    background: #f42920 !important;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-top: -30px;
-    border: 5px solid #000 !important;
-    color: white !important;
-}
-
-/* カレンダーをコンパクトに */
-.calendar {
-    gap: 5px;
-    margin-bottom: 10px;
-}
-.day { font-size: 1rem; }
-
-/* スタンプセレクターのスタイル */
-.stamp-selector-container {
-    margin: 10px 0 20px;
-}
-.stamp-pad {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-.pad-item {
-    background: #1a1a1a;
-    padding: 10px;
-    border-radius: 12px;
-    width: 65px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid #333;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.pad-item i { font-size: 1.4rem; margin-bottom: 4px; color: #555; }
-.pad-item span { font-size: 0.65rem; color: #555; }
-
-/* 選択中のスタンプを強調 */
-.pad-item.active {
-    border-color: #f42920;
-    background: #2a1010;
-}
-.pad-item.active i { color: #f42920; }
-.pad-item.active span { color: #fff; }
-
-/* カレンダー内の個別アイコン表示設定 */
-.day.stamped.rank-normal::after { content: "\f6be"; color: #f42920; } /* 猫 */
-.day.stamped.rank-rankA::after { content: "\f005"; color: #ffd700; }  /* 星(金) */
-.day.stamped.rank-god::after { content: "\f521"; color: #ff00ff; }    /* 王冠(紫) */
-
+/* =========================================
+   5. 目標リスト (Goals)
+   ========================================= */
 .goal-input-area {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 20px;
+    display: flex; gap: 4px; margin-bottom: 10px;
 }
-.goal-input-area input {
-    background: #222;
-    border: 1px solid #444;
-    color: white;
-    padding: 8px;
-    border-radius: 5px;
-}
-#newGoalCount { width: 60px; }
+#newGoalCount { width: 50px; }
 #newGoalText { flex-grow: 1; }
 
 .goal-list {
     list-style: none;
-    padding: 0;
     text-align: left;
+    border: 2px solid #fff;
+    padding: 5px;
 }
 .goal-list li {
-    background: #1a1a1a;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 2px dotted #fff; /* 点線で区切る */
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-left: 5px solid #444;
 }
-/* 達成した時のスタイル */
 .goal-list li.achieved {
-    border-left-color: #f42920;
-    background: #251010;
+    color: #ffd600; /* 達成したら黄色 */
 }
-.goal-list li .achieved-badge {
-    color: #f42920;
-    font-size: 0.8rem;
+.delete-goal { cursor: pointer; margin-left: 10px; }
+
+/* =========================================
+   6. コマンドウィンドウ (Command - Tab/Reset)
+   ========================================= */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.command-window {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 5px;
+    z-index: 1000;
+    /* 下部の余白調整 */
+    padding-bottom: calc(5px + env(safe-area-inset-bottom));
 }
-.delete-goal {
-    color: #666;
+
+.tab-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3列配置 */
+    gap: 5px;
+}
+
+/* コマンドボタン */
+.dq-command {
+    background: #000;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 8px 2px;
+    font-family: inherit;
+    font-size: 1rem;
     cursor: pointer;
-    margin-left: 10px;
-}
-
-.stamp-pad {
+    text-align: center;
+    border-radius: 0;
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-.pad-item {
-    background: #222;
-    padding: 10px;
-    border-radius: 12px;
-    width: 60px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    border: 2px solid transparent;
-    transition: 0.2s;
+    justify-content: center;
+    gap: 5px;
 }
-.pad-item i { font-size: 1.5rem; margin-bottom: 4px; color: #666; }
-.pad-item span { font-size: 0.6rem; color: #666; }
+.selector-trigger span { font-size: 1.2rem; }
 
-/* 選択中のスタンプを光らせる */
-.pad-item.active {
-    border-color: #f42920;
-    background: #331010;
+/* リセットボタン（赤字で危険な感じに） */
+.reset-cmd {
+    grid-column: 1 / -1; /* 横幅いっぱいに広げる */
+    color: #ff0000;
+    border-color: #ff0000;
+    margin-top: 5px;
 }
-.pad-item.active i { color: #f42920; }
-.pad-item.active span { color: #fff; }
+.reset-cmd:active {
+    background: #ff0000;
+    color: #fff;
+}
 
+/* --- 画面全体の揺れアニメーション --- */
+@keyframes dq-shake {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-4px, -4px); }
+    20% { transform: translate(4px, 4px); }
+    30% { transform: translate(-4px, 4px); }
+    40% { transform: translate(4px, -4px); }
+    50% { transform: translate(-4px, -4px); }
+    60% { transform: translate(4px, 4px); }
+    70% { transform: translate(-4px, 4px); }
+    80% { transform: translate(4px, -4px); }
+    90% { transform: translate(-4px, -4px); }
+    100% { transform: translate(0, 0); }
+}
 
+/* このクラスがついている間だけ揺れる */
+.shake-screen {
+    animation: dq-shake 0.3s steps(2) forwards; /* stepsを使ってカクカク動かす */
+}
+
+/* =========================================
+   7. ポップアップ (Popup)
+   ========================================= */
+.stamp-popup {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0); /* 中央から出現 */
+    background: #000;
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    z-index: 2000;
+    transition: transform 0.2s steps(4); /* カクカク出現 */
+}
+.stamp-popup.show {
+    transform: translate(-50%, -50%) scale(1);
+}
+.stamp-option {
+    font-family: 'PixelMplus10', monospace;
+    font-size: 3rem;
+    line-height: 1;
+}
+.stamp-option:hover, .stamp-option:active {
+    border-color: #ffd600; /* カーソルが合うと黄色枠 */
+    color: #ffd600;
+}

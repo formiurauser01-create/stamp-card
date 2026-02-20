@@ -3,70 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>私のスタンプカード</title>
-	
-    <link rel="icon" href="icon.png" type="image/png">
-    <link rel="shortcut icon" href="icon.png" type="image/png">
+    <title>ぼうけんのきろく</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <link rel="apple-touch-icon" href="icon.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+1p:wght@400;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">-->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div id="tab-main" class="tab-content active">
-            <h1 class="dela-gothic-one-regular">My<img src="icon03.png" alt="" width="36">Stamp</h1>
+        <div class="dq-window status-window">
+            <h1>My Stamp Quest</h1>
             
-            <div class="info-bar m-plus-1p-extrabold">
-                <button id="prevMonthBtn" class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="date-info"><h2 id="currentDate">----年 --月</h2></div>
-                <button id="nextMonthBtn" class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="info-bar">
+                <button id="prevMonthBtn" class="dq-btn opt-btn">◀</button>
+                <div class="date-info">
+                    <h2 id="currentDate">----/--</h2>
+                </div>
+                <button id="nextMonthBtn" class="dq-btn opt-btn">▶</button>
+                </div>
+            
+            <div class="status-row">
+                <p>ごうけい：<span id="totalCount" class="highlight">0</span> 個</p>
+                <button id="todayBtn" class="dq-btn opt-btn mini">今日</button>
             </div>
             
-            <p class="number-piece">合計<span id="totalCount" class="highlight">0</span>個</p>
-
-					<div id="rewardMessage" class="message-box m-plus-1p-extrabold"></div>
-
-            <div id="calendar" class="calendar"></div>
-            
-            <button id="resetBtn" class="m-plus-1p-extrabold">リセット</button>
+            <div class="dq-window message-window">
+                <div id="rewardMessage" class="message-box"></div>
+            </div>
+        </div>
+        <div id="tab-main" class="tab-content active">
+            <div class="dq-window main-window">
+                <div id="calendar" class="calendar"></div>
+            </div>
         </div>
 
         <div id="tab-goals" class="tab-content">
-            <h2 class="dela-gothic-one-regular">目標リスト</h2>
-            <div class="goal-input-area m-plus-1p-bold">
-                <input type="number" id="newGoalCount" placeholder="個数">
-                <input type="text" id="newGoalText" placeholder="内容">
-                <button onclick="addGoal()">追加</button>
+            <div class="dq-window main-window">
+                <h2>もくひょう リスト</h2>
+                <div class="goal-input-area">
+                    <input type="number" id="newGoalCount" placeholder="かず" class="dq-input">
+                    <input type="text" id="newGoalText" placeholder="ないよう" class="dq-input">
+                    <button onclick="addGoal()" class="dq-btn">ついか</button>
+                </div>
+                <ul id="goalList" class="goal-list"></ul>
             </div>
-            <ul id="goalList" class="goal-list m-plus-1p-bold"></ul>
         </div>
     </div>
 
-    <div id="stampPopup" class="stamp-popup">
-        <div class="stamp-option" onclick="selectRank('normal')"><i class="fa-solid fa-cat"></i></div>
-        <div class="stamp-option" onclick="selectRank('rankA')"><i class="fa-solid fa-star"></i></div>
-        <div class="stamp-option" onclick="selectRank('god')"><i class="fa-solid fa-crown"></i></div>
+		<div id="stampPopup" class="dq-window stamp-popup">
+				<div class="stamp-option" onclick="selectRank('normal')">♥</div>
+				<div class="stamp-option" onclick="selectRank('rankA')">★</div>
+				<div class="stamp-option" onclick="selectRank('god')">〠</div>
+		</div>
+	
+    <div class="dq-window command-window">
+        <nav class="tab-menu">
+            <button class="tab-btn active dq-command" onclick="switchTab('main')">スタンプ</button>
+						<button class="tab-btn selector-trigger dq-command" onclick="toggleStampPopup()">
+								<span id="activeStampIcon">♥</span> せんたく
+						</button>
+						<button class="tab-btn dq-command" onclick="switchTab('goals')">もくひょう</button>
+            <button id="resetBtn" class="dq-command reset-cmd">リセット</button>
+        </nav>
     </div>
-
-    <nav class="tab-menu dela-gothic-one-regular">
-        <button class="tab-btn active" onclick="switchTab('main')"><i class="fa-solid fa-stamp"></i></button>
-        <button class="tab-btn selector-trigger" onclick="toggleStampPopup()">
-            <div id="activeStampIcon"><i class="fa-solid fa-cat"></i></div>
-        </button>
-        <button class="tab-btn" onclick="switchTab('goals')"><i class="fa-solid fa-trophy"></i></button>
-    </nav>
-
     <script src="script.js" charset="utf-8"></script>
-</body></html>
+</body>
+</html>

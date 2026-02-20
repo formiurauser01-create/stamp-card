@@ -1,3 +1,10 @@
+﻿/* @charset "UTF-8" */
+
+/**
+ * ============================================================
+ * 1. 定数・グローバル変数の設定
+ * ============================================================
+ */
 const calendar = document.getElementById('calendar');
 const currentDateEl = document.getElementById('currentDate');
 const totalCountEl = document.getElementById('totalCount');
@@ -7,80 +14,171 @@ const storageKey = 'myStampCardData_V2';
 const rankKey = 'myStampCard_Rank'; 
 const goalKey = 'myStampCard_Goals';
 
+// スタンプの見た目設定
+const iconMap = { 'normal': '♥', 'rankA': '★', 'god': '〠' };
+
 let viewDate = new Date();
-// 初期ランクを読み込み、スタンプ台の表示を合わせる
 let currentRank = localStorage.getItem(rankKey) || 'normal';
 
-// 目標データの初期化
+// 初期目標（文字化け回避のエスケープ文字）
 let goals = JSON.parse(localStorage.getItem(goalKey)) || [
-    { count: 10, text: "プチご褒美" },
-    { count: 30, text: "欲しかった本を買う" }
+    { count: 10, text: "\u30D7\u30C1\u3054\u8912\u7F8E" }, // プチご褒美
+    { count: 30, text: "\u672C\u3092\u8CB7\u3046" }       // 本を買う
 ];
 
-function init() {
-    // スタンプ台の初期アクティブ状態を設定
-    document.querySelectorAll('.pad-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.rank === currentRank);
-    });
+/**
+ * ============================================================
+ * 2. 特殊演出（ドラクエ風エフェクト：音・揺れ・バイブ）
+ * ============================================================
+ */
 
-    // 設定タブ内のラジオボタン（予備用）の同期
-    const rankInputs = document.querySelectorAll('input[name="rank"]');
-    rankInputs.forEach(input => {
-        if (input.value === currentRank) input.checked = true;
-        input.addEventListener('change', (e) => {
-            selectRank(e.target.value);
-        });
-    });
+// 会心の一撃サウンド生成
+function playCriticalHitSound() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // 1. 衝撃のノイズ（「ザッ」）
+        const bufferSize = audioCtx.sampleRate * 0.15;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
+        
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        noise.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        
+        // 2. 低音の衝撃（「ドシュッ」）
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+        oscGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+        oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(oscGain);
+        oscGain.connect(audioCtx.destination);
 
-    renderCalendar();
-    renderGoals();
+        noise.start();
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    } catch (e) {
+        console.log("Audio Error: ", e);
+    }
 }
 
-// 全期間のスタンプ個数を計算
+// 揺れ・バイブ・サウンドを統合したエフェクト
+function triggerDqEffect() {
+    // 画面全体を揺らす
+    document.body.classList.remove('shake-screen');
+    void document.body.offsetWidth; // リフロー強制
+    document.body.classList.add('shake-screen');
+
+    // バイブレーション（ト・トン！）
+    if (navigator.vibrate) {
+        navigator.vibrate([50, 30, 100]); 
+    }
+
+    // サウンド再生
+    playCriticalHitSound();
+}
+
+/**
+ * ============================================================
+ * 3. データ処理・計算系
+ * ============================================================
+ */
+
+// 全期間のスタンプ合計を計算
 function getGrandTotal() {
     const allData = JSON.parse(localStorage.getItem(storageKey)) || {};
     let total = 0;
     Object.values(allData).forEach(monthStamps => {
-        if (Array.isArray(monthStamps)) {
-            total += monthStamps.length;
-        }
+        if (Array.isArray(monthStamps)) total += monthStamps.length;
     });
     return total;
 }
 
-// カレンダー描画（1日ごとにランクを判定）
+// スタンプのON/OFF切り替え保存
+function toggleStamp(monthKey, day, rank) {
+    const allData = JSON.parse(localStorage.getItem(storageKey)) || {};
+    if (!allData[monthKey]) allData[monthKey] = [];
+    
+    const index = allData[monthKey].findIndex(d => d.day === day);
+    if (index > -1) allData[monthKey].splice(index, 1); // 既にあれば消す
+    if (rank) allData[monthKey].push({ day: day, rank: rank }); // 指定があれば追加
+    
+    localStorage.setItem(storageKey, JSON.stringify(allData));
+    updateStatus(getGrandTotal());
+}
+
+// 目標データの保存
+function saveGoals() {
+    localStorage.setItem(goalKey, JSON.stringify(goals));
+}
+
+/**
+ * ============================================================
+ * 4. 画面描画系
+ * ============================================================
+ */
+
+// カレンダーの表示
 function renderCalendar() {
+    if (!calendar) return;
     calendar.innerHTML = ''; 
+
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth() + 1;
     const monthKey = `${year}-${month}`;
-    currentDateEl.textContent = `${year}年 ${month}月`;
+    
+    const now = new Date();
+    const isThisMonth = (now.getFullYear() === year && now.getMonth() + 1 === month);
+    const todayDate = now.getDate();
+
+    // 今日ボタンの表示状態
+    const todayBtn = document.getElementById('todayBtn');
+    if (todayBtn) {
+        todayBtn.style.opacity = isThisMonth ? "0.3" : "1";
+        todayBtn.style.pointerEvents = isThisMonth ? "none" : "auto";
+    }
+
+    // 年月表示
+    currentDateEl.innerHTML = year + "\u5E74 " + month + "\u6708"; 
 
     const allData = JSON.parse(localStorage.getItem(storageKey)) || {};
-    const monthData = allData[monthKey] || []; // [{day:1, rank:'god'}, ...] 形式
+    const monthData = allData[monthKey] || [];
 
     updateStatus(getGrandTotal());
 
     const daysInMonth = new Date(year, month, 0).getDate();
+
     for (let i = 1; i <= daysInMonth; i++) {
         const dayDiv = document.createElement('div');
         dayDiv.classList.add('day');
         dayDiv.textContent = i;
 
-        // 保存データからその日のランクを探す
+        if (isThisMonth && i === todayDate) {
+            dayDiv.classList.add('today');
+        }
+
         const stampInfo = monthData.find(d => d.day === i);
         if (stampInfo) {
             dayDiv.classList.add('stamped', `rank-${stampInfo.rank}`);
         }
 
+        // マス目クリック時の挙動
         dayDiv.addEventListener('click', () => {
             if (!dayDiv.classList.contains('stamped')) {
-                // 新しく押す：現在の選択ランクを付与
                 dayDiv.classList.add('stamped', `rank-${currentRank}`);
                 toggleStamp(monthKey, i, currentRank);
+                triggerDqEffect(); // スタンプ時のみエフェクト
             } else {
-                // 消す：すべてのランククラスを削除
-                dayDiv.classList.remove('stamped', 'rank-normal', 'rank-god', 'rank-rankA');
+                dayDiv.className = 'day';
+                if (isThisMonth && i === todayDate) dayDiv.classList.add('today');
                 toggleStamp(monthKey, i, null);
             }
         });
@@ -88,80 +186,92 @@ function renderCalendar() {
     }
 }
 
-// 保存・削除のメインロジック
-function toggleStamp(monthKey, day, rank) {
-    const allData = JSON.parse(localStorage.getItem(storageKey)) || {};
-    if (!allData[monthKey]) allData[monthKey] = [];
-
-    const index = allData[monthKey].findIndex(d => d.day === day);
-    
-    // 既存データがあれば一旦削除
-    if (index > -1) {
-        allData[monthKey].splice(index, 1);
-    } 
-    
-    // rankが指定されていれば（＝追加なら）保存
-    if (rank) {
-        allData[monthKey].push({ day: day, rank: rank });
-    }
-
-    localStorage.setItem(storageKey, JSON.stringify(allData));
-    updateStatus(getGrandTotal());
-}
-
-// スタンプ台での選択
-window.selectRank = function(rank) {
-    currentRank = rank;
-    localStorage.setItem(rankKey, rank);
-    
-    // スタンプ台（pad-item）の見た目を更新
-    document.querySelectorAll('.pad-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.rank === rank);
-    });
-    
-    // 設定タブ内のラジオボタンも同期
-    const radio = document.querySelector(`input[name="rank"][value="${rank}"]`);
-    if (radio) radio.checked = true;
-};
-
-// 目標関連の関数
-window.addGoal = function() {
-    const countInput = document.getElementById('newGoalCount');
-    const textInput = document.getElementById('newGoalText');
-    if (!countInput.value || !textInput.value) return;
-
-    goals.push({ count: parseInt(countInput.value), text: textInput.value });
-    goals.sort((a, b) => a.count - b.count);
-    saveGoals();
-    renderGoals();
-    updateStatus(getGrandTotal()); // 小窓表示を更新
-
-    countInput.value = '';
-    textInput.value = '';
-};
-
+// 目標リストの表示
 function renderGoals() {
     const listEl = document.getElementById('goalList');
+    if (!listEl) return;
     const currentTotal = getGrandTotal();
     listEl.innerHTML = '';
-
+    
     goals.forEach((goal, index) => {
         const isAchieved = currentTotal >= goal.count;
         const li = document.createElement('li');
         if (isAchieved) li.classList.add('achieved');
         li.innerHTML = `
-            <div>
-                <span style="color: #f42920">${goal.count}個</span>: ${goal.text}
-                ${isAchieved ? '<span class="achieved-badge">【達成！】</span>' : ''}
-            </div>
+            <div><span style="color: #f42920">${goal.count}\u500B</span>: ${goal.text}</div>
             <i class="fa-solid fa-trash-can delete-goal" onclick="deleteGoal(${index})"></i>
         `;
         listEl.appendChild(li);
     });
 }
 
+// メッセージと合計個数の更新
+function updateStatus(count) {
+    if (totalCountEl) totalCountEl.textContent = count;
+    const nextGoal = goals.find(g => g.count > count);
+    
+    if (nextGoal) {
+        const remaining = nextGoal.count - count;
+        messageEl.innerHTML = `<span style="color: #fffbc6;">${nextGoal.text}</span> \u307E\u3067 \u3042\u3068 <span style="color: #f42920; font-size: 1.5rem;">${remaining}</span> \u500B`;
+    } else {
+        messageEl.textContent = "Clear!! \uD83D\uDC51";
+    }
+}
+
+/**
+ * ============================================================
+ * 5. ユーザー操作（イベントハンドラ）
+ * ============================================================
+ */
+
+// タブ切り替え
+window.switchTab = function(tabName) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    if (targetTab) targetTab.classList.add('active');
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+};
+
+// スタンプ選択ポップアップ
+window.toggleStampPopup = function() {
+    const popup = document.getElementById('stampPopup');
+    if (popup) popup.classList.toggle('show');
+};
+
+// スタンプの種類を変更
+window.selectRank = function(rank) {
+    currentRank = rank;
+    localStorage.setItem(rankKey, rank);
+    
+    const iconEl = document.getElementById('activeStampIcon');
+    if (iconEl) iconEl.textContent = iconMap[rank];
+    
+    const popup = document.getElementById('stampPopup');
+    if (popup) popup.classList.remove('show');
+};
+
+// 目標の追加
+window.addGoal = function() {
+    const countInput = document.getElementById('newGoalCount');
+    const textInput = document.getElementById('newGoalText');
+    if (!countInput.value || !textInput.value) return;
+    
+    goals.push({ count: parseInt(countInput.value), text: textInput.value });
+    goals.sort((a, b) => a.count - b.count);
+    
+    saveGoals();
+    renderGoals();
+    updateStatus(getGrandTotal());
+    
+    countInput.value = '';
+    textInput.value = '';
+};
+
+// 目標の削除
 window.deleteGoal = function(index) {
-    if(confirm('この目標を削除しますか？')) {
+    if(confirm('\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F')) { // 削除しますか？
         goals.splice(index, 1);
         saveGoals();
         renderGoals();
@@ -169,78 +279,47 @@ window.deleteGoal = function(index) {
     }
 };
 
-function saveGoals() {
-    localStorage.setItem(goalKey, JSON.stringify(goals));
-}
+/**
+ * ============================================================
+ * 6. 初期化と静的イベント
+ * ============================================================
+ */
 
-function updateStatus(count) {
-    totalCountEl.textContent = count;
-    const nextGoal = goals.find(g => g.count > count);
-    
-    if (nextGoal) {
-        const remaining = nextGoal.count - count;
-        messageEl.innerHTML = `<span style="color: #fffbc6; font-size: 1.1rem;">${nextGoal.text}</span> まで あと <span style="color: #f42920; font-size: 1.5rem;">${remaining}</span> 個`;
-    } else if (goals.length > 0) {
-        messageEl.textContent = "Clear!! 👑";
-    } else {
-        messageEl.textContent = "目標を設定しましょう ☉";
-    }
-    
-    totalCountEl.style.transform = "scale(1.1)";
-    setTimeout(() => { totalCountEl.style.transform = "scale(1)"; }, 200);
-    renderGoals();
-}
-
-// タブ・ナビゲーション系
-window.switchTab = function(tabName) {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-    if (event && event.currentTarget) event.currentTarget.classList.add('active');
-};
-
-document.getElementById('prevMonthBtn').addEventListener('click', () => {
-    viewDate.setMonth(viewDate.getMonth() - 1);
-    renderCalendar();
-});
-
-document.getElementById('nextMonthBtn').addEventListener('click', () => {
-    viewDate.setMonth(viewDate.getMonth() + 1);
-    renderCalendar();
-});
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-    if(confirm('【注意】\nこれまでの全期間のスタンプとランク情報をすべて削除しますか？')) {
-        localStorage.removeItem(storageKey);
-        renderCalendar();
-    }
-});
-
-init();
-
-// ポップアップの表示・非表示
-window.toggleStampPopup = function() {
-    const popup = document.getElementById('stampPopup');
-    popup.classList.toggle('show');
-};
-
-// スタンプ選択（選んだら閉じる）
-window.selectRank = function(rank) {
-    currentRank = rank;
-    localStorage.setItem(rankKey, rank);
-    
-    // アイコン表示を更新
-    const iconMap = { 'normal': 'fa-cat', 'rankA': 'fa-star', 'god': 'fa-crown' };
-    document.getElementById('activeStampIcon').innerHTML = `<i class="fa-solid ${iconMap[rank]}"></i>`;
-    
-    // ポップアップを閉じる
-    document.getElementById('stampPopup').classList.remove('show');
-};
-
-// 既存のinitに初期アイコン反映を追加
 function init() {
-    const iconMap = { 'normal': 'fa-cat', 'rankA': 'fa-star', 'god': 'fa-crown' };
-    document.getElementById('activeStampIcon').innerHTML = `<i class="fa-solid ${iconMap[currentRank]}"></i>`;
+    // 初期アイコンの反映
+    const iconEl = document.getElementById('activeStampIcon');
+    if (iconEl) iconEl.textContent = iconMap[currentRank];
+
+    // 月移動ボタン
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+        viewDate.setMonth(viewDate.getMonth() - 1);
+        renderCalendar();
+    });
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+        viewDate.setMonth(viewDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    // 今日へ戻るボタン
+    const todayBtn = document.getElementById('todayBtn');
+    if (todayBtn) {
+        todayBtn.addEventListener('click', () => {
+            viewDate = new Date();
+            renderCalendar();
+        });
+    }
+
+    // データリセットボタン
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if(confirm('DATA RESET? (GAME OVER)')) {
+            localStorage.removeItem(storageKey);
+            renderCalendar();
+        }
+    });
+
     renderCalendar();
     renderGoals();
 }
+
+// 冒険の開始
+init();
