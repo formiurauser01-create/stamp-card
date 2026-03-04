@@ -3,74 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>マイ&hearts;スタ</title>
-    
-		<link rel="icon" href="favicon.ico" type="image/x-icon">
-		<link rel="apple-touch-icon" href="favicon.ico">
-		<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">-->
+    <title>マイ♥スタ</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
-		<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <div class="container">
-        <div class="dq-window status-window">
-            <h1>My Stamp Quest</h1>
-            
-            <div class="info-bar">
-                <button id="prevMonthBtn" class="dq-btn opt-btn">◀</button>
-                <div class="date-info">
-                    <h2 id="currentDate">----/--</h2>
+    <div id="shaker">
+        <div class="container">
+            <div class="dq-window status-window">
+                <h1>My Stamp Quest</h1>
+                <div class="info-bar">
+                    <button id="prevMonthBtn" class="dq-btn opt-btn">◀</button>
+                    <div class="date-info">
+                        <h2 id="currentDate">----/--</h2>
+                    </div>
+                    <button id="nextMonthBtn" class="dq-btn opt-btn">▶</button>
                 </div>
-                <button id="nextMonthBtn" class="dq-btn opt-btn">▶</button>
+                <div class="status-row">
+                    <p>合計：<span id="totalCount" class="highlight">0</span> 個</p>
+                    <button id="todayBtn" class="dq-btn opt-btn mini">今日</button>
                 </div>
-            
-            <div class="status-row">
-                <p>合計：<span id="totalCount" class="highlight">0</span> 個</p>
-                <button id="todayBtn" class="dq-btn opt-btn mini">今日</button>
+                <div class="dq-window message-window">
+                    <div id="rewardMessage" class="message-box"></div>
+                </div>
             </div>
-            
-            <div class="dq-window message-window">
-                <div id="rewardMessage" class="message-box"></div>
-            </div>
-        </div>
-        <div id="tab-main" class="tab-content active">
-            <div class="dq-window main-window">
-                <div id="calendar" class="calendar"></div>
-            </div>
-        </div>
 
-        <div id="tab-goals" class="tab-content">
-            <div class="dq-window main-window">
-                <h2>目標 リスト</h2>
-                <div class="goal-input-area">
-                    <input type="number" id="newGoalCount" placeholder="かず" class="dq-input">
-                    <input type="text" id="newGoalText" placeholder="ないよう" class="dq-input">
-                    <button onclick="addGoal()" class="dq-btn">ついか</button>
+            <div id="tab-main" class="tab-content active">
+                <div class="dq-window main-window">
+                    <div id="calendar" class="calendar"></div>
                 </div>
-                <ul id="goalList" class="goal-list"></ul>
+            </div>
+
+            <div id="tab-goals" class="tab-content">
+                <div class="dq-window main-window">
+                    <h2>目標 リスト</h2>
+                    <div class="goal-input-area">
+                        <input type="number" id="newGoalCount" placeholder="かず" class="dq-input">
+                        <input type="text" id="newGoalText" placeholder="ないよう" class="dq-input">
+                        <button onclick="addGoal()" class="dq-btn">ついか</button>
+                    </div>
+                    <ul id="goalList" class="goal-list"></ul>
+                </div>
             </div>
         </div>
+    </div> <div id="stampPopup" class="dq-window stamp-popup">
+        <div class="stamp-option" onclick="selectRank('normal')">♥</div>
+        <div class="stamp-option" onclick="selectRank('rankA')">★</div>
+        <div class="stamp-option" onclick="selectRank('god')">〠</div>
     </div>
 
-		<div id="stampPopup" class="dq-window stamp-popup">
-				<div class="stamp-option" onclick="selectRank('normal')">♥</div>
-				<div class="stamp-option" onclick="selectRank('rankA')">★</div>
-				<div class="stamp-option" onclick="selectRank('god')">〠</div>
-		</div>
-	
     <div class="dq-window command-window">
         <nav class="tab-menu">
             <button class="tab-btn active dq-command" onclick="switchTab('main')">スタンプ</button>
-						<button class="tab-btn selector-trigger dq-command" onclick="toggleStampPopup()">
-								<span id="activeStampIcon">♥</span>選択
-						</button>
-						<button class="tab-btn dq-command" onclick="switchTab('goals')">目標</button>
+            <button class="tab-btn selector-trigger dq-command" onclick="toggleStampPopup()">
+                <span id="activeStampIcon">♥</span>選択
+            </button>
+            <button class="tab-btn dq-command" onclick="switchTab('goals')">目標</button>
             <button id="resetBtn" class="dq-command reset-cmd">リセット</button>
         </nav>
     </div>
-	<div id="achievementStamp" class="achievement-stamp">
-    <div class="stamp-inner">たっせい！</div>
-</div>
+
+    <div id="achievementStamp" class="achievement-stamp">
+        <div class="stamp-inner">たっせい！</div>
+    </div>
+
     <script src="script.js" charset="utf-8"></script>
 </body>
 </html>

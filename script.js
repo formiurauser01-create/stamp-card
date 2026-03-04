@@ -70,9 +70,13 @@ function playFanfare() {
 }
 
 function triggerDqEffect() {
-    document.body.classList.remove('shake-screen');
-    void document.body.offsetWidth; 
-    document.body.classList.add('shake-screen');
+    const shaker = document.getElementById('shaker');
+    if (!shaker) return;
+
+    shaker.classList.remove('shake-screen');
+    void shaker.offsetWidth; // リフロー発生
+    shaker.classList.add('shake-screen');
+    
     if (navigator.vibrate) navigator.vibrate([50, 30, 100]); 
     playCriticalHitSound();
 }
@@ -254,13 +258,11 @@ function updateStatus(count) {
         return { ...g, nextAt, remaining: nextAt - count, isFinished };
     });
 
-    // 候補：未達成かつ残りがあるもの
     const candidates = allGoalStatus.filter(g => !g.isFinished && g.remaining > 0);
 
-    // 距離が近い順 > 距離が同じなら通常目標(▶)を優先
     candidates.sort((a, b) => {
         if (a.remaining !== b.remaining) return a.remaining - b.remaining;
-        return a.isLoop ? 1 : -1;
+        return a.isLoop ? 1 : -1; // 同じ距離なら 1度きり目標(▶)優先
     });
 
     const nextGoal = candidates[0];
@@ -304,7 +306,9 @@ window.addGoal = function() {
 window.deleteGoal = function(id) {
     if(confirm('この もくひょう を 削除しますか？')) {
         goals = goals.filter(g => g.id !== id);
-        saveGoals(); renderGoals(); updateStatus(getGrandTotal());
+        saveGoals(); 
+        renderGoals(); 
+        updateStatus(getGrandTotal());
     }
 };
 
