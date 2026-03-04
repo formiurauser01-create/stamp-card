@@ -1,6 +1,6 @@
 {
-  "name": "スタンプカード",
-  "short_name": "スタンプ",
+  "name": "My Stamp Quest",
+  "short_name": "マイ♥スタ",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [
