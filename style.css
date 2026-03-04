@@ -1,25 +1,21 @@
 @charset "utf-8";
 
 /* =========================================
-   0. フォント設定 (PixelMplus10)
+   0. フォント設定
    ========================================= */
 @font-face {
     font-family: 'PixelMplus10';
-    /* ↓ 実際のフォントファイルのパスに合わせて変更してください ↓ */
     src: url('fonts/PixelMplus10-Regular.ttf') format('truetype');
     font-weight: normal;
-    font-style: normal;
 }
 @font-face {
     font-family: 'PixelMplus10';
-    /* ↓ 実際のフォントファイルのパスに合わせて変更してください ↓ */
     src: url('fonts/PixelMplus10-Bold.ttf') format('truetype');
     font-weight: bold;
-    font-style: normal;
 }
 
 /* =========================================
-   1. ドラクエ風基本設定 (Base)
+   1. 基本設定 (Base)
    ========================================= */
 html {
     background-color: #000000 !important;
@@ -27,41 +23,33 @@ html {
 }
 
 body {
-    /* 指定のビットマップフォントを適用 */
     font-family: 'PixelMplus10', monospace, sans-serif;
     background-color: #000000 !important;
     color: #ffffff;
     margin: 0;
     padding: 10px;
-    padding-bottom: 140px; /* コマンドウィンドウ分の余白 */
+    padding-bottom: 160px; /* コマンド窓が被らないよう広めに確保 */
     box-sizing: border-box;
-    image-rendering: pixelated; /* 画像をドット絵風にクッキリ表示 */
+    image-rendering: pixelated;
 }
 
-/* 共通：ドラクエ風ウィンドウ枠 */
 .dq-window {
     background-color: #000;
-    border: 4px double #ffffff; /* 白い二重線 */
+    border: 4px double #ffffff;
     padding: 10px;
     margin-bottom: 10px;
-    border-radius: 0 !important; /* 角丸禁止 */
-    box-shadow: 0 0 0 2px #000 inset; /* 内側に少し黒枠を入れて立体感 */
+    position: relative;
 }
 
 h1, h2 {
     text-align: center;
     margin: 5px 0;
     font-weight: bold;
-    letter-spacing: 1px;
 }
 
 /* =========================================
-   2. ステータスウィンドウ (Header / UI)
+   2. ステータス・メッセージ
    ========================================= */
-.status-window {
-    text-align: left;
-}
-
 .info-bar {
     display: flex;
     justify-content: space-between;
@@ -69,83 +57,59 @@ h1, h2 {
     margin-bottom: 5px;
 }
 
-.date-info h2 {
-    font-size: 1.4rem;
-    margin: 0 10px;
-}
-
 .status-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin-bottom: 5px;
 }
 
 .highlight {
-    color: #ffd600; /* 黄色で強調 */
+    color: #ffd600;
     font-size: 1.3rem;
     font-weight: bold;
 }
 
-/* メッセージウィンドウ風 */
 .message-window {
-    border: 2px solid #fff; /* ここは単線で少し区別 */
-    padding: 8px;
-    min-height: 2.5em;
-    font-size: 1rem;
-    line-height: 1.4;
+    border: 2px solid #fff;
+    padding: 12px 9px 15px;
+    font-size: 0.9rem;
     margin-top: 5px;
 }
 
 /* =========================================
-   3. ドラクエ風ボタン・入力フォーム
+   3. ボタン・入力
    ========================================= */
-/* 共通ボタンスタイル */
 .dq-btn {
     background: #000;
-    color: #fff;
-    border: 2px solid #fff;
+    color: inherit;
+    border: 2px solid;
     padding: 4px 8px;
     font-family: inherit;
-    font-size: 1rem;
     cursor: pointer;
-    border-radius: 0;
 }
 .dq-btn:active, .dq-command.active {
-    background: #fff; /* 押した時は白黒反転 */
+    background: #fff;
     color: #000;
 }
 
-/* 年月移動などの操作ボタン */
-.opt-btn {
-    font-weight: bold;
-    min-width: 30px;
-}
-.mini {
-    font-size: 0.8rem;
-    padding: 2px 5px;
-}
-
-/* 入力フォーム */
 .dq-input {
     background: #000;
     color: #fff;
     border: 2px solid #fff;
     padding: 5px;
     font-family: inherit;
-    font-size: 1rem;
-    border-radius: 0;
 }
 
 /* =========================================
-   4. カレンダー本体 (Calendar - Main Window)
+   4. カレンダー本体
    ========================================= */
 .calendar {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 4px;
-    border: 2px solid #fff; /* カレンダー全体も枠で囲む */
+    border: 2px solid #fff;
     padding: 4px;
     background: #000;
 }
@@ -153,69 +117,48 @@ h1, h2 {
 .day {
     aspect-ratio: 1;
     background-color: #000;
-    border: 2px solid #fff; /* マス目も白い枠線 */
+    border: 2px solid #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #fff;
     cursor: pointer;
-    user-select: none;
     font-size: 1.1rem;
-    border-radius: 0; /* 角丸禁止 */
 }
 
-.day:active {
-    background: #fff;
-    color: #000;
-}
-
-/* --- スタンプ状態 --- */
 .day.stamped {
-    background-color: #fff; /* 押したら白背景に反転 */
-    color: #fff; /* 数字は黒に */
+    background-color: #fff;
     position: relative;
 }
 
-/* --- スタンプ状態の表示設定 --- */
 .day.stamped::after {
-    /* FontAwesomeの指定を削除し、PixelMplus10を強制適用 */
-		font-family: 'PixelMplus10', monospace !important;
+    font-family: 'PixelMplus10' !important;
     position: absolute;
-    font-size: 2.7rem;
+    font-size: 2.5rem;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    line-height: 2.7rem;
 }
 
-/* --- 今日（Today）の強調 --- */
-/* ドラクエ風に「カーソルが合っている」ような点滅枠 */
+/* ランク別スタンプ表示 */
+.day.stamped.rank-normal::after { content: "♥"; color: #ff0000; left: 54%; }
+.day.stamped.rank-rankA::after { content: "★"; color: #000; }
+.day.stamped.rank-god::after { content: "〠"; color: #000; left: 54%; }
+
 .day.today {
-    border: 2px dashed #ffd600; /* 黄色の点線 */
+    border: 2px dashed #ffd600;
     animation: dqFlash 0.5s step-end infinite;
 }
-@keyframes dqFlash {
-    50% { border-color: transparent; }
+@keyframes dqFlash { 50% { border-color: transparent; } }
+
+#todayBtn {
+	font-weight: bold;
+	font-size: 0.7rem;
 }
 
-/* 各ランクのテキストと色設定 */
-/* ドラクエのパレットに近い原色を使用 */
-.day.stamped.rank-normal::after { 
-    content: "♥"; 
-    color:#ff0000; /* 情熱の赤 */
-		left: 54%;
-} 
-.day.stamped.rank-rankA::after { 
-    content: "★";
-		color: #000;
-    /*color: #ffd600;*/ /* 輝く黄色 */
-} 
-.day.stamped.rank-god::after { 
-    content: "〠"; 
-		color: #000;
-    /*color: #00ff00;*/ /* 癒やしの緑、またはお好みの色で */
-	left: 54%;
+#todayBtn.is-active-month {
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 /* =========================================
@@ -224,28 +167,75 @@ h1, h2 {
 .goal-input-area {
     display: flex; gap: 4px; margin-bottom: 10px;
 }
-#newGoalCount { width: 50px; }
+#newGoalCount { width: 60px; }
 #newGoalText { flex-grow: 1; }
 
 .goal-list {
     list-style: none;
-    text-align: left;
-    border: 2px solid #fff;
-    padding: 5px;
+    padding: 0;
+    margin: 0;
 }
+
 .goal-list li {
-    padding: 5px;
-    border-bottom: 2px dotted #fff; /* 点線で区切る */
+    background: #000;
+    border: 1px solid #7f7f7f; 
+    margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 10px;
 }
-.goal-list li.achieved {
-    color: #ffd600; /* 達成したら黄色 */
+
+.goal-list li.loop-goal {
+    border-left: 8px solid #ffcc00; /* 金色 */
 }
-.delete-goal { cursor: pointer; margin-left: 10px; }
+
+/* 通常目標の達成：赤色 (#f42920) */
+.goal-list li.achieved-single {
+    color: #f42920;
+    border-color: inherit;
+		border-width: 2px;
+}
+.goal-list li.achieved-single .editable-count {
+    color: #f42920 !important;
+}
+
+/* ∞目標の達成（1度でも達成）：黄色 (#ffd600) */
+.goal-list li.achieved-loop {
+    color: #ffd600;
+    border-color: inherit;
+		border-width: 2px;
+}
+.goal-list li.achieved-loop .editable-count {
+    color: #ffd600 !important;
+}
+
+/* 途中・挑戦中（黄色 #ffd600） */
+.goal-list li.in-progress {
+    color: #ffd600;
+    border-color: #ffd600;
+}
+.goal-list li.in-progress .editable-count {
+    color: #ffd600 !important;
+}
+
+/* 未達成時のカウントの色（白にするため !importantを外すか調整） */
+.editable-count {
+    color: inherit; 
+}
+
+.goal-content {
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.editable-count, .editable-text {
+    border-bottom: 1px dashed currentColor;
+    padding: 2px 4px;
+}
 
 /* =========================================
-   6. コマンドウィンドウ (Command - Tab/Reset)
+   6. 達成演出・タブ・コマンド
    ========================================= */
 .tab-content { display: none; }
 .tab-content.active { display: block; }
@@ -254,92 +244,106 @@ h1, h2 {
     position: fixed;
     bottom: 0; left: 0; width: 100%;
     box-sizing: border-box;
-    margin: 0;
-    padding: 5px;
+    padding: 10px;
+	margin-bottom: 0;
     z-index: 1000;
-    /* 下部の余白調整 */
-    padding-bottom: calc(5px + env(safe-area-inset-bottom));
+    background: #000;
 }
 
 .tab-menu {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3列配置 */
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 5px;
 }
 
-/* コマンドボタン */
 .dq-command {
-    background: #000;
+background: #000;
     color: #fff;
     border: 2px solid #fff;
-    padding: 8px 2px;
+    padding: 12px 3px;
     font-family: inherit;
     font-size: 1rem;
-    cursor: pointer;
     text-align: center;
-    border-radius: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+    cursor: pointer;
+    position: relative;
 }
-.selector-trigger span { font-size: 1.2rem; }
 
-/* リセットボタン（赤字で危険な感じに） */
+.tab-btn::before {
+		content: "▶";
+    position: absolute;
+    left: 0.3rem;
+    margin-right: 6px;
+    font-size: 0.8rem;
+}
+
+#activeStampIcon {
+    font-size: 1.2rem;
+    line-height: 0;
+    margin: 3px;
+    padding: 0;
+}
+
 .reset-cmd {
-    grid-column: 1 / -1; /* 横幅いっぱいに広げる */
+    grid-column: 1 / -1;
     color: #ff0000;
     border-color: #ff0000;
     margin-top: 5px;
 }
-.reset-cmd:active {
-    background: #ff0000;
-    color: #fff;
-}
 
-/* --- 画面全体の揺れアニメーション --- */
-@keyframes dq-shake {
-    0% { transform: translate(0, 0); }
-    10% { transform: translate(-4px, -4px); }
-    20% { transform: translate(4px, 4px); }
-    30% { transform: translate(-4px, 4px); }
-    40% { transform: translate(4px, -4px); }
-    50% { transform: translate(-4px, -4px); }
-    60% { transform: translate(4px, 4px); }
-    70% { transform: translate(-4px, 4px); }
-    80% { transform: translate(4px, -4px); }
-    90% { transform: translate(-4px, -4px); }
-    100% { transform: translate(0, 0); }
-}
-
-/* このクラスがついている間だけ揺れる */
-.shake-screen {
-    animation: dq-shake 0.3s steps(2) forwards; /* stepsを使ってカクカク動かす */
-}
-
-/* =========================================
-   7. ポップアップ (Popup)
-   ========================================= */
+/* スタンプポップアップ */
 .stamp-popup {
     position: fixed;
     top: 50%; left: 50%;
-    transform: translate(-50%, -50%) scale(0); /* 中央から出現 */
+    transform: translate(-50%, -50%) scale(0);
     background: #000;
     display: flex;
     gap: 15px;
-    padding: 20px;
+    padding: 40px;
     z-index: 2000;
-    transition: transform 0.2s steps(4); /* カクカク出現 */
+    transition: transform 0.2s steps(4);
 }
-.stamp-popup.show {
-    transform: translate(-50%, -50%) scale(1);
+.stamp-popup.show { transform: translate(-50%, -50%) scale(1); }
+
+.stamp-popup.show .stamp-option {
+	font-size: 2.7rem;
 }
-.stamp-option {
-    font-family: 'PixelMplus10', monospace;
-    font-size: 3rem;
-    line-height: 1;
+
+/* 達成スタンプ */
+.achievement-stamp {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(2.4);
+    z-index: 3000;
+    pointer-events: none;
+    opacity: 0;
 }
-.stamp-option:hover, .stamp-option:active {
-    border-color: #ffd600; /* カーソルが合うと黄色枠 */
+.achievement-stamp.show {
+    animation: dq-stamp-pop 0.8s steps(4) forwards;
+}
+.stamp-inner {
+    background: #000;
+    border: 8px double #ffd600;
     color: #ffd600;
+    padding: 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 0 4px #000, 0 0 20px rgba(255, 214, 0, 0.6);
+}
+
+@keyframes dq-stamp-pop {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* 画面揺れ */
+.shake-screen {
+    animation: dq-shake 0.3s steps(2) forwards;
+}
+@keyframes dq-shake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-4px, 4px); }
+    40% { transform: translate(4px, -4px); }
+    60% { transform: translate(-4px, -4px); }
+    80% { transform: translate(4px, 4px); }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ぼうけんのきろく</title>
+    <title>マイ&hearts;スタンプ</title>
     
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">-->
     <link rel="stylesheet" href="style.css">
@@ -22,7 +22,7 @@
                 </div>
             
             <div class="status-row">
-                <p>ごうけい：<span id="totalCount" class="highlight">0</span> 個</p>
+                <p>合計：<span id="totalCount" class="highlight">0</span> 個</p>
                 <button id="todayBtn" class="dq-btn opt-btn mini">今日</button>
             </div>
             
@@ -38,7 +38,7 @@
 
         <div id="tab-goals" class="tab-content">
             <div class="dq-window main-window">
-                <h2>もくひょう リスト</h2>
+                <h2>目標 リスト</h2>
                 <div class="goal-input-area">
                     <input type="number" id="newGoalCount" placeholder="かず" class="dq-input">
                     <input type="text" id="newGoalText" placeholder="ないよう" class="dq-input">
@@ -59,12 +59,15 @@
         <nav class="tab-menu">
             <button class="tab-btn active dq-command" onclick="switchTab('main')">スタンプ</button>
 						<button class="tab-btn selector-trigger dq-command" onclick="toggleStampPopup()">
-								<span id="activeStampIcon">♥</span> せんたく
+								<span id="activeStampIcon">♥</span>選択
 						</button>
-						<button class="tab-btn dq-command" onclick="switchTab('goals')">もくひょう</button>
+						<button class="tab-btn dq-command" onclick="switchTab('goals')">目標</button>
             <button id="resetBtn" class="dq-command reset-cmd">リセット</button>
         </nav>
     </div>
+	<div id="achievementStamp" class="achievement-stamp">
+    <div class="stamp-inner">たっせい！</div>
+</div>
     <script src="script.js" charset="utf-8"></script>
 </body>
 </html>
