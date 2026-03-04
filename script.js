@@ -136,14 +136,13 @@ function renderCalendar() {
     const monthKey = `${year}-${month}`;
     const now = new Date();
     const isThisMonth = (now.getFullYear() === year && now.getMonth() + 1 === month);
-		const todayBtn = document.getElementById('todayBtn');
-			if (todayBtn) {
-					if (isThisMonth) {
-							todayBtn.classList.add('is-active-month'); // 今月なら薄くする
-					} else {
-							todayBtn.classList.remove('is-active-month'); // 他の月ならハッキリ出す
-					}
-			}
+
+    // 「今日」ボタンの透過制御
+    const todayBtn = document.getElementById('todayBtn');
+    if (todayBtn) {
+        if (isThisMonth) todayBtn.classList.add('is-active-month');
+        else todayBtn.classList.remove('is-active-month');
+    }
     
     currentDateEl.innerHTML = year + "年 " + month + "月"; 
     const allData = JSON.parse(localStorage.getItem(storageKey)) || {};
@@ -156,10 +155,6 @@ function renderCalendar() {
         dayDiv.classList.add('day');
         dayDiv.textContent = i;
         
-        // 1. 今月の表示を薄くする設定
-        if (isThisMonth) {
-            dayDiv.classList.add('this-month');
-        }
         if (isThisMonth && i === now.getDate()) dayDiv.classList.add('today');
 
         const stampInfo = monthData.find(d => d.day === i);
@@ -174,7 +169,6 @@ function renderCalendar() {
                 triggerDqEffect();
             } else {
                 dayDiv.className = 'day';
-                if (isThisMonth) dayDiv.classList.add('this-month');
                 if (isThisMonth && i === now.getDate()) dayDiv.classList.add('today');
                 toggleStamp(monthKey, i, null);
             }
@@ -198,18 +192,12 @@ function renderGoals() {
     sortedGoals.forEach((goal) => {
         const li = document.createElement('li');
         
-        // 判定ロジック
+        // 色分け判定ロジック
         if (goal.isLoop) {
             li.classList.add('loop-goal');
-            // ∞目標：1度でも達成（現在の合計が目標数以上）していれば黄色
-            if (currentTotal >= goal.count) {
-                li.classList.add('achieved-loop');
-            }
+            if (currentTotal >= goal.count) li.classList.add('achieved-loop'); // ∞達成：黄色
         } else {
-            // 通常目標：目標数に達していれば赤
-            if (currentTotal >= goal.count) {
-                li.classList.add('achieved-single');
-            }
+            if (currentTotal >= goal.count) li.classList.add('achieved-single'); // 通常達成：赤
         }
 
         li.innerHTML = `
@@ -218,10 +206,10 @@ function renderGoals() {
                 <span class="editable-count">${goal.count}個</span>: 
                 <span class="editable-text">${goal.text}</span>
             </div>
-            <button onclick="deleteGoal(${goal.id})" class="dq-btn mini">削除</button>
+            <button class="dq-btn mini delete-btn">削除</button>
         `;
 
-        // タップで直接編集
+        // 個数編集
         li.querySelector('.editable-count').addEventListener('click', (e) => {
             e.stopPropagation();
             const newVal = prompt("個数を変更:", goal.count);
@@ -230,6 +218,8 @@ function renderGoals() {
                 saveGoals(); renderGoals(); updateStatus(getGrandTotal());
             }
         });
+
+        // テキスト編集
         li.querySelector('.editable-text').addEventListener('click', (e) => {
             e.stopPropagation();
             const newText = prompt("内容を変更:", goal.text);
@@ -239,6 +229,12 @@ function renderGoals() {
             }
         });
 
+        // 削除ボタン (特定のIDのみを削除する安全な実装)
+        li.querySelector('.delete-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.deleteGoal(goal.id);
+        });
+
         listEl.appendChild(li);
     });
 }
@@ -246,44 +242,27 @@ function renderGoals() {
 function updateStatus(count) {
     if (totalCountEl) totalCountEl.textContent = count;
     
-    // 1. 全ての目標を「次の達成タイミング」で計算・整理
     const allGoalStatus = goals.map(g => {
         let nextAt = 0;
         let isFinished = false;
-
         if (g.isLoop) {
-            // ∞目標：現在の数を超えた最小の倍数を計算
             nextAt = (Math.floor(count / g.count) + 1) * g.count;
         } else {
-            // 1度きり目標：目標数そのもの
             nextAt = g.count;
-            // すでに達成済みなら終了フラグ
             if (count >= g.count) isFinished = true;
         }
-
-        return { 
-            ...g, 
-            nextAt, 
-            remaining: nextAt - count,
-            isFinished 
-        };
+        return { ...g, nextAt, remaining: nextAt - count, isFinished };
     });
 
-    // 2. 候補を絞り込み：未達成、かつ残り個数が正のもの
+    // 候補：未達成かつ残りがあるもの
     const candidates = allGoalStatus.filter(g => !g.isFinished && g.remaining > 0);
 
-    // 3. 優先順位でソート
-    // 第一条件：残り個数 (remaining) が少ない順
-    // 第二条件：残り個数が同じなら、通常目標 (isLoop === false) を優先
+    // 距離が近い順 > 距離が同じなら通常目標(▶)を優先
     candidates.sort((a, b) => {
-        if (a.remaining !== b.remaining) {
-            return a.remaining - b.remaining;
-        }
-        // remainingが同じ場合、isLoopがfalseのものを前にする
+        if (a.remaining !== b.remaining) return a.remaining - b.remaining;
         return a.isLoop ? 1 : -1;
     });
 
-    // 4. 小窓への表示
     const nextGoal = candidates[0];
     if (nextGoal) {
         messageEl.innerHTML = `<span style="color: #ffd600;">${nextGoal.text}</span> まで あと <span style="color: #f42920; font-size: 1.5rem; font-weight: bold;">${nextGoal.remaining}</span> 個`;
@@ -296,8 +275,9 @@ function updateStatus(count) {
 window.switchTab = function(tabName) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-    event.currentTarget.classList.add('active');
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    if (targetTab) targetTab.classList.add('active');
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
 };
 
 window.toggleStampPopup = function() {
@@ -315,26 +295,30 @@ window.addGoal = function() {
     const count = document.getElementById('newGoalCount');
     const text = document.getElementById('newGoalText');
     if (!count.value || !text.value) return;
-    const isLoop = confirm("繰り返し目標にしますか？");
+    const isLoop = confirm("繰り返し目標（∞）にしますか？");
     goals.push({ id: Date.now(), count: parseInt(count.value), text: text.value, isLoop });
     saveGoals(); renderGoals(); updateStatus(getGrandTotal());
     count.value = ''; text.value = '';
 };
 
 window.deleteGoal = function(id) {
-    if(confirm('削除しますか？')) {
+    if(confirm('この もくひょう を 削除しますか？')) {
         goals = goals.filter(g => g.id !== id);
         saveGoals(); renderGoals(); updateStatus(getGrandTotal());
     }
 };
 
 function init() {
-    document.getElementById('activeStampIcon').textContent = iconMap[currentRank];
+    const iconEl = document.getElementById('activeStampIcon');
+    if (iconEl) iconEl.textContent = iconMap[currentRank];
+    
     document.getElementById('prevMonthBtn').onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
     document.getElementById('nextMonthBtn').onclick = () => { viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); };
     document.getElementById('todayBtn').onclick = () => { viewDate = new Date(); renderCalendar(); };
-    document.getElementById('resetBtn').onclick = () => { if(confirm('RESET?')) { localStorage.clear(); location.reload(); } };
-    renderCalendar(); renderGoals();
+    document.getElementById('resetBtn').onclick = () => { if(confirm('全データをリセットしますか？')) { localStorage.clear(); location.reload(); } };
+    
+    renderCalendar(); 
+    renderGoals();
 }
 
 init();
